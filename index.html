@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber & Stylist | Мастер твоего стиля</title>
+    <!-- Подключение шрифтов -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Подключение иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Основные переменные */
+        :root {
+            --bg-color: #0f0f0f;
+            --surface-color: #1a1a1a;
+            --accent-color: #ffffff;
+            --text-main: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 1px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            background-color: var(--accent-color);
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Навигация */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: var(--transition);
+            opacity: 0.7;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        /* Главный экран */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=1920') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 80px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--text-dim);
+            animation: fadeInUp 1.2s ease;
+        }
+
+        /* Секция Услуги */
+        .section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--accent-color);
+            margin: 20px auto 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--surface-color);
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255,255,255,0.2);
+            background: #252525;
+        }
+
+        .service-card i {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .service-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-top: 15px;
+            display: block;
+        }
+
+        /* Секция О себе */
+        .about-flex {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 5px;
+            filter: grayscale(100%);
+            transition: var(--transition);
+        }
+
+        .about-image:hover img {
+            filter: grayscale(0%);
+        }
+
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-text h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            color: var(--text-dim);
+        }
+
+        /* Отзывы */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .review-card {
+            background: var(--surface-color);
+            padding: 30px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .review-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .review-author {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        /* Футер */
+        footer {
+            padding: 50px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .social-links a {
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--text-dim);
+            transform: scale(1.2);
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Мобильная адаптивность */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Для полноценного сайта тут было бы бургер-меню */
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+
+            .about-flex {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">Alex Style</div>
+            <ul class="nav-links">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#services">Услуги</a></li>
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#reviews">Отзывы</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Главный экран -->
+    <header class="hero" id="home">
+        <div class="container hero-content">
+            <h1>Искусство Вашего Стиля</h1>
+            <p>Профессиональные стрижки и уход, которые подчеркивают индивидуальность.</p>
+            <a href="#services" class="btn">Записаться на стрижку</a>
+        </div>
+    </header>
+
+    <!-- Секция Услуги -->
+    <section class="section container" id="services">
+        <h2 class="section-title">Услуги и Цены</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <i class="fas fa-cut"></i>
+                <h3>Классическая стрижка</h3>
+                <p>Мастерская работа ножницами и машинкой, мытье головы и укладка.</p>
+                <span class="price">2 500 ₽</span>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-razor"></i>
+                <h3>Моделирование бороды</h3>
+                <p>Создание идеальной формы бороды и усов с четкими контурами.</p>
+                <span class="price">1 500 ₽</span>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-magic"></i>
+                <h3>Комплекс «Все включено»</h3>
+                <p>Стрижка, борода и профессиональный уход за кожей лица.</p>
+                <span class="price">3 500 ₽</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция О себе -->
+    <section class="section" id="about" style="background-color: var(--surface-color);">
+        <div class="container about-flex">
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1599305090598-fe179d501227?auto=format&fit=crop&q=80&w=800" alt="Парикмахер за работой">
+            </div>
+            <div class="about-text">
+                <h2 style="margin-bottom: 20px;">Александр Новиков</h2>
+                <h3>Топ-стилист с 10-летним опытом</h3>
+                <p>Я верю, что правильная стрижка может изменить самоощущение человека. Мой путь начался в Лондонской академии Vidal Sassoon, где я научился геометрической точности и пониманию структуры волос.</p>
+                <p>К каждому клиенту я применяю индивидуальный подход: мы обсуждаем не только форму лица, но и ваш образ жизни, чтобы стрижка выглядела идеально даже без салонной укладки.</p>
+                <a href="#" class="btn" style="background: none; color: white; border: 1px solid white;">Подробнее</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция Отзывы -->
+    <section class="section container" id="reviews">
+        <h2 class="section-title">Отзывы клиентов</h2>
+        <div class="reviews-grid">
+            <div class="review-card">
+                <p class="review-text">"Лучший мастер в городе. Александр сразу понял, что мне нужно, хотя я сам не мог объяснить. Результат превзошел ожидания!"</p>
+                <p class="review-author">— Дмитрий В.</p>
+            </div>
+            <div class="review-card">
+                <p class="review-text">"Прихожу сюда не только за стрижкой, но и за атмосферой. Настоящий профессионализм и внимание к деталям."</p>
+                <p class="review-author">— Артем М.</p>
+            </div>
+            <div class="review-card">
+                <p class="review-text">"Борода теперь выглядит идеально. Очень рекомендую комплексную услугу, оно того стоит!"</p>
+                <p class="review-author">— Иван К.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-telegram"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <p>&copy; 2023 Alex Style Barber. Все права защищены.</p>
+            <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 10px;">Москва, ул. Стильная, 15</p>
+        </div>
+    </footer>
+
+    <script>
+        // Простая анимация появления элементов при прокрутке
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card, .review-card, .about-text').forEach(el => {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(30px)";
+            el.style.transition = "all 0.6s ease-out";
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
