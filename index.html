@@ -110,6 +110,41 @@
         .gallery-slide.active {
             opacity: 1;
         }
+        .gallery-thumbs {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            .gallery-thumbs {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        .gallery-thumb {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            position: relative;
+            isolation: isolate;
+            background: #0f172a0d;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            opacity: 0.9;
+        }
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .gallery-thumb:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            opacity: 1;
+        }
+        .gallery-thumb.active {
+            box-shadow: 0 0 0 2px #11b4d4, 0 10px 30px rgba(17, 180, 212, 0.25);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white transition-colors duration-300">
@@ -217,21 +252,22 @@
 <span class="material-symbols-outlined">close</span>
 </button>
 </div>
-<div class="relative flex-1 p-6 overflow-hidden">
+<div class="relative flex-1 p-6 overflow-hidden flex flex-col gap-4">
 <div id="gallery-container" class="relative w-full h-[500px] rounded-xl overflow-hidden bg-slate-100 dark:bg-background-dark">
 <!-- Images will be inserted here dynamically -->
-</div>
 <!-- Gallery Navigation -->
-<button onclick="prevGalleryImage()" class="absolute left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-charcoal/90 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg text-slate-700 dark:text-white">
+<button onclick="prevGalleryImage()" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 dark:bg-charcoal/90 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg text-slate-700 dark:text-white">
 <span class="material-symbols-outlined">chevron_left</span>
 </button>
-<button onclick="nextGalleryImage()" class="absolute right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-charcoal/90 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg text-slate-700 dark:text-white">
+<button onclick="nextGalleryImage()" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 dark:bg-charcoal/90 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg text-slate-700 dark:text-white">
 <span class="material-symbols-outlined">chevron_right</span>
 </button>
 <!-- Image Counter -->
-<div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/60 text-white px-4 py-2 rounded-full text-sm font-medium">
+<div class="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-10 bg-black/60 text-white px-4 py-2 rounded-full text-sm font-medium">
 <span id="gallery-current">1</span> / <span id="gallery-total">4</span>
 </div>
+</div>
+<div id="gallery-thumbs" class="gallery-thumbs"></div>
 </div>
 <div class="p-6 border-t border-gray-200 dark:border-white/10">
 <p id="gallery-description" class="text-slate-600 dark:text-white/70 text-center"></p>
@@ -1014,132 +1050,162 @@
     });
     
     // Gallery Modal
-    const galleryModal = document.getElementById('gallery-modal');
-    const galleryContainer = document.getElementById('gallery-container');
-    const galleryTitle = document.getElementById('gallery-title');
-    const galleryDescription = document.getElementById('gallery-description');
-    const galleryCurrent = document.getElementById('gallery-current');
-    const galleryTotal = document.getElementById('gallery-total');
+const galleryModal = document.getElementById('gallery-modal');
+const galleryContainer = document.getElementById('gallery-container');
+const galleryTitle = document.getElementById('gallery-title');
+const galleryDescription = document.getElementById('gallery-description');
+const galleryCurrent = document.getElementById('gallery-current');
+const galleryTotal = document.getElementById('gallery-total');
+const galleryThumbs = document.getElementById('gallery-thumbs');
     
     const galleryData = {
         haircut: {
             title: 'Classic Haircut Gallery',
-            description: 'Precision cuts tailored to your unique style and hair type. See transformations from our satisfied clients.',
+            description: 'Precision cuts, clean fades, and tailored shapes that match your style and hair type.',
             images: [
-                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
-                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
-                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800',
-                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800'
+                'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=85'
             ]
         },
         beard: {
             title: 'Luxury Beard Trim Gallery',
-            description: 'Expert beard sculpting and shaping with premium products for a refined, polished look.',
+            description: 'Sculpted beards with hot towels, oils, and razor detailing for crisp lines.',
             images: [
-                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800',
-                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
-                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
-                'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800'
+                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1559599101-7466d78034a5?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85'
             ]
         },
         shave: {
             title: 'Signature Shave Gallery',
-            description: 'The ultimate straight razor shave experience with hot towel preparation and skin conditioning.',
+            description: 'Straight-razor ritual with foam, hot towels, and skin conditioning for a smooth finish.',
             images: [
-                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800',
-                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
-                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
-                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800'
+                'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1516571137133-1be29e37143b?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=1200&q=85'
             ]
         },
         treatment: {
             title: 'Hair Treatment Gallery',
-            description: 'Revitalizing treatments with deep conditioning and scalp massage for healthy, vibrant hair.',
+            description: 'Deep conditioning, scalp massage, and restorative care for healthy, vibrant hair.',
             images: [
-                'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800',
-                'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
-                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
-                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800'
+                'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1582719478248-54e9f2ac7637?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=85'
             ]
         },
         family: {
             title: 'Father & Son Gallery',
-            description: 'Special bonding moments with matching haircuts for dads and their little ones.',
+            description: 'Matching cuts and fun moments for dads and kids in a friendly studio vibe.',
             images: [
-                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
-                'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800',
-                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
-                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800'
+                'https://images.unsplash.com/photo-1511288593014-8acb33db1c83?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1605289909398-87d9d4b4c6f3?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=85'
             ]
         },
         vip: {
             title: 'VIP Package Gallery',
-            description: 'The complete luxury grooming experience with haircut, beard trim, facial, and refreshments.',
+            description: 'Full luxury experience: haircut, beard, facial, hot towel shave, and lounge comfort.',
             images: [
-                'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800',
-                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800',
-                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
-                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800'
+                'https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=85',
+                'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=85'
             ]
         }
     };
     
-    let currentGallery = null;
-    let currentImageIndex = 0;
-    
-    function openGalleryModal(service) {
-        currentGallery = galleryData[service];
-        currentImageIndex = 0;
-        
-        galleryTitle.textContent = currentGallery.title;
-        galleryDescription.textContent = currentGallery.description;
-        galleryTotal.textContent = currentGallery.images.length;
-        
-        // Build gallery slides
-        galleryContainer.innerHTML = '';
-        currentGallery.images.forEach((img, index) => {
-            const slide = document.createElement('div');
-            slide.className = `gallery-slide ${index === 0 ? 'active' : ''}`;
-            slide.innerHTML = `<img src="${img}" alt="Gallery image ${index + 1}" class="w-full h-full object-cover">`;
-            galleryContainer.appendChild(slide);
-        });
-        
-        updateGalleryCounter();
-        galleryModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeGalleryModal() {
-        galleryModal.classList.remove('active');
-        document.body.style.overflow = '';
-        currentGallery = null;
-        currentImageIndex = 0;
-    }
-    
-    function updateGalleryCounter() {
-        galleryCurrent.textContent = currentImageIndex + 1;
-    }
-    
-    function showGalleryImage(index) {
-        const slides = galleryContainer.querySelectorAll('.gallery-slide');
-        slides.forEach((slide, i) => {
-            slide.classList.toggle('active', i === index);
-        });
-        currentImageIndex = index;
-        updateGalleryCounter();
-    }
-    
-    function nextGalleryImage() {
-        if (!currentGallery) return;
-        const nextIndex = (currentImageIndex + 1) % currentGallery.images.length;
-        showGalleryImage(nextIndex);
-    }
-    
-    function prevGalleryImage() {
-        if (!currentGallery) return;
-        const prevIndex = (currentImageIndex - 1 + currentGallery.images.length) % currentGallery.images.length;
-        showGalleryImage(prevIndex);
-    }
+let currentGallery = null;
+let currentImageIndex = 0;
+
+function syncThumbs(index) {
+    const thumbs = galleryThumbs.querySelectorAll('.gallery-thumb');
+    thumbs.forEach((thumb, i) => thumb.classList.toggle('active', i === index));
+}
+
+function openGalleryModal(service) {
+    currentGallery = galleryData[service];
+    currentImageIndex = 0;
+
+    galleryTitle.textContent = currentGallery.title;
+    galleryDescription.textContent = currentGallery.description;
+    galleryTotal.textContent = currentGallery.images.length;
+
+    // Build gallery slides
+    galleryContainer.innerHTML = '';
+    currentGallery.images.forEach((img, index) => {
+        const slide = document.createElement('div');
+        slide.className = `gallery-slide ${index === 0 ? 'active' : ''}`;
+        slide.innerHTML = `<img src="${img}" alt="Gallery image ${index + 1}" class="w-full h-full object-cover" loading="lazy">`;
+        galleryContainer.appendChild(slide);
+    });
+
+    // Build thumbnails
+    galleryThumbs.innerHTML = '';
+    currentGallery.images.forEach((img, index) => {
+        const btn = document.createElement('button');
+        btn.className = `gallery-thumb ${index === 0 ? 'active' : ''}`;
+        btn.setAttribute('aria-label', `Show image ${index + 1}`);
+        btn.innerHTML = `<img src="${img}" alt="Thumbnail ${index + 1}" loading="lazy">`;
+        btn.addEventListener('click', () => showGalleryImage(index));
+        galleryThumbs.appendChild(btn);
+    });
+
+    updateGalleryCounter();
+    galleryModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeGalleryModal() {
+    galleryModal.classList.remove('active');
+    document.body.style.overflow = '';
+    currentGallery = null;
+    currentImageIndex = 0;
+}
+
+function updateGalleryCounter() {
+    galleryCurrent.textContent = currentImageIndex + 1;
+}
+
+function showGalleryImage(index) {
+    const slides = galleryContainer.querySelectorAll('.gallery-slide');
+    slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+    });
+    syncThumbs(index);
+    currentImageIndex = index;
+    updateGalleryCounter();
+}
+
+function nextGalleryImage() {
+    if (!currentGallery) return;
+    const nextIndex = (currentImageIndex + 1) % currentGallery.images.length;
+    showGalleryImage(nextIndex);
+}
+
+function prevGalleryImage() {
+    if (!currentGallery) return;
+    const prevIndex = (currentImageIndex - 1 + currentGallery.images.length) % currentGallery.images.length;
+    showGalleryImage(prevIndex);
+}
     
     galleryModal.addEventListener('click', (e) => {
         if (e.target === galleryModal) {
