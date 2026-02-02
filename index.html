@@ -101,9 +101,14 @@
         .modal.active .modal-content {
             transform: scale(1);
         }
-        /* Material Symbols filled state */
-        .material-symbols-filled {
-            font-variation-settings: 'FILL' 1;
+        .gallery-slide {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            position: absolute;
+            inset: 0;
+        }
+        .gallery-slide.active {
+            opacity: 1;
         }
     </style>
 </head>
@@ -203,6 +208,37 @@
 </div>
 </div>
 
+<!-- Gallery Modal -->
+<div id="gallery-modal" class="modal fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+<div class="modal-content bg-white dark:bg-charcoal rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-gray-200 dark:border-white/10 shadow-2xl flex flex-col">
+<div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-white/10">
+<h3 id="gallery-title" class="text-2xl font-bold text-slate-900 dark:text-white">Service Gallery</h3>
+<button onclick="closeGalleryModal()" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-background-dark flex items-center justify-center hover:bg-primary/20 transition-all text-slate-700 dark:text-white">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="relative flex-1 p-6 overflow-hidden">
+<div id="gallery-container" class="relative w-full h-[500px] rounded-xl overflow-hidden bg-slate-100 dark:bg-background-dark">
+<!-- Images will be inserted here dynamically -->
+</div>
+<!-- Gallery Navigation -->
+<button onclick="prevGalleryImage()" class="absolute left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-charcoal/90 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg text-slate-700 dark:text-white">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button onclick="nextGalleryImage()" class="absolute right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-charcoal/90 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg text-slate-700 dark:text-white">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+<!-- Image Counter -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/60 text-white px-4 py-2 rounded-full text-sm font-medium">
+<span id="gallery-current">1</span> / <span id="gallery-total">4</span>
+</div>
+</div>
+<div class="p-6 border-t border-gray-200 dark:border-white/10">
+<p id="gallery-description" class="text-slate-600 dark:text-white/70 text-center"></p>
+</div>
+</div>
+</div>
+
 <!-- Hero Section -->
 <section class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
 <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10s] hover:scale-105" data-alt="Professional barber styling a client in a moody studio" style='background-image: linear-gradient(rgba(0, 0, 0, 0.6) 0%, rgba(10, 10, 10, 0.9) 100%), url("https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1920");'>
@@ -241,7 +277,7 @@
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 <!-- Service Card 1 -->
-<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in">
+<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in cursor-pointer" onclick="openGalleryModal('haircut')">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Close up of a classic mens haircut" style='background-image: url("https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800");' loading="lazy"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 <div class="service-overlay absolute inset-0 bg-primary/20 opacity-0 transition-opacity duration-300"></div>
@@ -253,13 +289,18 @@
 <p class="text-white/70 text-sm mb-4">
                         A bespoke cut tailored to your hair type and style. Includes a consultation, wash, and premium styling finish.
                     </p>
-<button onclick="openBookingModalWithService('haircut')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
-                        Book This Service
-                    </button>
+<div class="flex gap-2">
+<button onclick="event.stopPropagation(); openGalleryModal('haircut')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded font-bold text-sm cursor-pointer backdrop-blur-sm">
+                            <span class="material-symbols-outlined align-middle mr-1">photo_library</span> Gallery
+                        </button>
+<button onclick="event.stopPropagation(); openBookingModalWithService('haircut')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
+                            Book
+                        </button>
+</div>
 </div>
 </div>
 <!-- Service Card 2 -->
-<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in" style="transition-delay: 100ms;">
+<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in cursor-pointer" style="transition-delay: 100ms;" onclick="openGalleryModal('beard')">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Barber grooming a beard with precision tools" style='background-image: url("https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800");' loading="lazy"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 <div class="service-overlay absolute inset-0 bg-primary/20 opacity-0 transition-opacity duration-300"></div>
@@ -271,13 +312,18 @@
 <p class="text-white/70 text-sm mb-4">
                         Sculpting and shaping with hot towel treatment and luxury beard oil application for a refined look.
                     </p>
-<button onclick="openBookingModalWithService('beard')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
-                        Book This Service
-                    </button>
+<div class="flex gap-2">
+<button onclick="event.stopPropagation(); openGalleryModal('beard')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded font-bold text-sm cursor-pointer backdrop-blur-sm">
+                            <span class="material-symbols-outlined align-middle mr-1">photo_library</span> Gallery
+                        </button>
+<button onclick="event.stopPropagation(); openBookingModalWithService('beard')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
+                            Book
+                        </button>
+</div>
 </div>
 </div>
 <!-- Service Card 3 -->
-<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in" style="transition-delay: 200ms;">
+<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in cursor-pointer" style="transition-delay: 200ms;" onclick="openGalleryModal('shave')">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Barber applying a hot towel for a shave" style='background-image: url("https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800");' loading="lazy"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 <div class="service-overlay absolute inset-0 bg-primary/20 opacity-0 transition-opacity duration-300"></div>
@@ -289,13 +335,18 @@
 <p class="text-white/70 text-sm mb-4">
                         The ultimate relaxation. Straight razor shave with multi-step hot towel preparation and skin conditioning.
                     </p>
-<button onclick="openBookingModalWithService('shave')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
-                        Book This Service
-                    </button>
+<div class="flex gap-2">
+<button onclick="event.stopPropagation(); openGalleryModal('shave')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded font-bold text-sm cursor-pointer backdrop-blur-sm">
+                            <span class="material-symbols-outlined align-middle mr-1">photo_library</span> Gallery
+                        </button>
+<button onclick="event.stopPropagation(); openBookingModalWithService('shave')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
+                            Book
+                        </button>
+</div>
 </div>
 </div>
 <!-- Service Card 4 -->
-<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in" style="transition-delay: 300ms;">
+<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in cursor-pointer" style="transition-delay: 300ms;" onclick="openGalleryModal('treatment')">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Hair coloring and treatment" style='background-image: url("https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800");' loading="lazy"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 <div class="service-overlay absolute inset-0 bg-primary/20 opacity-0 transition-opacity duration-300"></div>
@@ -307,13 +358,18 @@
 <p class="text-white/70 text-sm mb-4">
                         Revitalize your hair with deep conditioning, scalp massage, and premium organic products for healthy, vibrant locks.
                     </p>
-<button onclick="openBookingModalWithService('treatment')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
-                        Book This Service
-                    </button>
+<div class="flex gap-2">
+<button onclick="event.stopPropagation(); openGalleryModal('treatment')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded font-bold text-sm cursor-pointer backdrop-blur-sm">
+                            <span class="material-symbols-outlined align-middle mr-1">photo_library</span> Gallery
+                        </button>
+<button onclick="event.stopPropagation(); openBookingModalWithService('treatment')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
+                            Book
+                        </button>
+</div>
 </div>
 </div>
 <!-- Service Card 5 -->
-<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in" style="transition-delay: 400ms;">
+<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in cursor-pointer" style="transition-delay: 400ms;" onclick="openGalleryModal('family')">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Father and son haircut" style='background-image: url("https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800");' loading="lazy"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 <div class="service-overlay absolute inset-0 bg-primary/20 opacity-0 transition-opacity duration-300"></div>
@@ -325,13 +381,18 @@
 <p class="text-white/70 text-sm mb-4">
                         A special bonding experience. Matching haircuts for dad and child with complimentary beverages and photos.
                     </p>
-<button onclick="openBookingModalWithService('family')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
-                        Book This Service
-                    </button>
+<div class="flex gap-2">
+<button onclick="event.stopPropagation(); openGalleryModal('family')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded font-bold text-sm cursor-pointer backdrop-blur-sm">
+                            <span class="material-symbols-outlined align-middle mr-1">photo_library</span> Gallery
+                        </button>
+<button onclick="event.stopPropagation(); openBookingModalWithService('family')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
+                            Book
+                        </button>
+</div>
 </div>
 </div>
 <!-- Service Card 6 -->
-<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in" style="transition-delay: 500ms;">
+<div class="service-card relative group h-[450px] rounded-xl overflow-hidden fade-in cursor-pointer" style="transition-delay: 500ms;" onclick="openGalleryModal('vip')">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="VIP grooming package" style='background-image: url("https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800");' loading="lazy"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 <div class="service-overlay absolute inset-0 bg-primary/20 opacity-0 transition-opacity duration-300"></div>
@@ -343,9 +404,14 @@
 <p class="text-white/70 text-sm mb-4">
                         The complete experience. Haircut, beard trim, facial treatment, hot towel shave, and complimentary whiskey or espresso.
                     </p>
-<button onclick="openBookingModalWithService('vip')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
-                        Book This Service
-                    </button>
+<div class="flex gap-2">
+<button onclick="event.stopPropagation(); openGalleryModal('vip')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded font-bold text-sm cursor-pointer backdrop-blur-sm">
+                            <span class="material-symbols-outlined align-middle mr-1">photo_library</span> Gallery
+                        </button>
+<button onclick="event.stopPropagation(); openBookingModalWithService('vip')" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-white px-4 py-2 rounded font-bold text-sm cursor-pointer">
+                            Book
+                        </button>
+</div>
 </div>
 </div>
 </div>
@@ -945,6 +1011,148 @@
         }
         
         lastScroll = currentScroll;
+    });
+    
+    // Gallery Modal
+    const galleryModal = document.getElementById('gallery-modal');
+    const galleryContainer = document.getElementById('gallery-container');
+    const galleryTitle = document.getElementById('gallery-title');
+    const galleryDescription = document.getElementById('gallery-description');
+    const galleryCurrent = document.getElementById('gallery-current');
+    const galleryTotal = document.getElementById('gallery-total');
+    
+    const galleryData = {
+        haircut: {
+            title: 'Classic Haircut Gallery',
+            description: 'Precision cuts tailored to your unique style and hair type. See transformations from our satisfied clients.',
+            images: [
+                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
+                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
+                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800',
+                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800'
+            ]
+        },
+        beard: {
+            title: 'Luxury Beard Trim Gallery',
+            description: 'Expert beard sculpting and shaping with premium products for a refined, polished look.',
+            images: [
+                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800',
+                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
+                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
+                'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800'
+            ]
+        },
+        shave: {
+            title: 'Signature Shave Gallery',
+            description: 'The ultimate straight razor shave experience with hot towel preparation and skin conditioning.',
+            images: [
+                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800',
+                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
+                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
+                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800'
+            ]
+        },
+        treatment: {
+            title: 'Hair Treatment Gallery',
+            description: 'Revitalizing treatments with deep conditioning and scalp massage for healthy, vibrant hair.',
+            images: [
+                'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800',
+                'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
+                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
+                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800'
+            ]
+        },
+        family: {
+            title: 'Father & Son Gallery',
+            description: 'Special bonding moments with matching haircuts for dads and their little ones.',
+            images: [
+                'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800',
+                'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800',
+                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
+                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800'
+            ]
+        },
+        vip: {
+            title: 'VIP Package Gallery',
+            description: 'The complete luxury grooming experience with haircut, beard trim, facial, and refreshments.',
+            images: [
+                'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800',
+                'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800',
+                'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800',
+                'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800'
+            ]
+        }
+    };
+    
+    let currentGallery = null;
+    let currentImageIndex = 0;
+    
+    function openGalleryModal(service) {
+        currentGallery = galleryData[service];
+        currentImageIndex = 0;
+        
+        galleryTitle.textContent = currentGallery.title;
+        galleryDescription.textContent = currentGallery.description;
+        galleryTotal.textContent = currentGallery.images.length;
+        
+        // Build gallery slides
+        galleryContainer.innerHTML = '';
+        currentGallery.images.forEach((img, index) => {
+            const slide = document.createElement('div');
+            slide.className = `gallery-slide ${index === 0 ? 'active' : ''}`;
+            slide.innerHTML = `<img src="${img}" alt="Gallery image ${index + 1}" class="w-full h-full object-cover">`;
+            galleryContainer.appendChild(slide);
+        });
+        
+        updateGalleryCounter();
+        galleryModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeGalleryModal() {
+        galleryModal.classList.remove('active');
+        document.body.style.overflow = '';
+        currentGallery = null;
+        currentImageIndex = 0;
+    }
+    
+    function updateGalleryCounter() {
+        galleryCurrent.textContent = currentImageIndex + 1;
+    }
+    
+    function showGalleryImage(index) {
+        const slides = galleryContainer.querySelectorAll('.gallery-slide');
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+        currentImageIndex = index;
+        updateGalleryCounter();
+    }
+    
+    function nextGalleryImage() {
+        if (!currentGallery) return;
+        const nextIndex = (currentImageIndex + 1) % currentGallery.images.length;
+        showGalleryImage(nextIndex);
+    }
+    
+    function prevGalleryImage() {
+        if (!currentGallery) return;
+        const prevIndex = (currentImageIndex - 1 + currentGallery.images.length) % currentGallery.images.length;
+        showGalleryImage(prevIndex);
+    }
+    
+    galleryModal.addEventListener('click', (e) => {
+        if (e.target === galleryModal) {
+            closeGalleryModal();
+        }
+    });
+    
+    // Keyboard navigation for gallery
+    document.addEventListener('keydown', (e) => {
+        if (!galleryModal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeGalleryModal();
+        if (e.key === 'ArrowRight') nextGalleryImage();
+        if (e.key === 'ArrowLeft') prevGalleryImage();
     });
 </script>
 </body></html>
